@@ -1,12 +1,15 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useState } from "react";
+import { setTimeout } from "timers/promises";
 
 import { api } from "../utils/api";
 
 const Home: NextPage = () => {
+  const [name, setName] = useState<string>("");
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  const pokemon = api.pokemon.get.useQuery({ name: "ditto" });
+  const pokemon = api.pokemon.get.useQuery({ name: `${name}` });
 
   return (
     <>
@@ -17,17 +20,25 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="shadow-2xl rounded-full">
-            {pokemon.data ? (
-              <Image
-                src={pokemon.data.sprites.front_default}
-                width={150}
-                height={150}
-                alt="Ditto"
-              />
-            ) : (
-              "Loading pokemon..."
-            )}
+          <div className="flex flex-col shadow-2xl rounded-full">
+            <div className="flex">
+              {pokemon?.data?.sprites ? (
+                <Image
+                  className="grow"
+                  src={pokemon.data.sprites.front_default || pokemon.data.sprites.front_shiny}
+                  width={180}
+                  height={180}
+                  alt="pokemon"
+                />
+              ) : (
+                <div className="text-white">
+                  Loading pokemon...
+                </div>
+              )}
+            </div>
+            <div>
+              <input className="rounded p-4" name="pokemon" type="text" onChange={ e => setName(e.target.value) } placeholder="Pokemon"/>
+            </div>
           </div>
           <p className="text-2xl text-white">
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}

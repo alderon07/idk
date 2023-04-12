@@ -32,14 +32,14 @@ type Pokemon = {
   abilities?: Ability[],
   base_experience?: number,
   sprites: Sprite,
-}
+} 
  
 export const pokemonRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ name: z.string()}))
     .query(async ({ input }): Promise<Pokemon> => {
       const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${input.name}`, {method: 'get'}
+        `https://pokeapi.co/api/v2/pokemon/${input?.name?.toLowerCase()}`, {method: 'get'}
       );
 
       if (!response.ok) {
@@ -48,7 +48,6 @@ export const pokemonRouter = createTRPCRouter({
       }
 
       const pokemon: Pokemon = await response.json() as Pokemon;
-
       return pokemon;
     }),
 });
